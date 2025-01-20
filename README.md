@@ -1,6 +1,6 @@
-# Pathern
+# Pathern (path + pattern)
 
-A URL path pathern matching library for the Gleam programming language.
+A URL path pattern matching library for the Gleam programming language.
 
 ## Installation
 
