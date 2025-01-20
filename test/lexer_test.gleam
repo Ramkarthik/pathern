@@ -1,6 +1,6 @@
 import gleeunit
 import gleeunit/should
-import internal/lexer.{type Token}
+import pathern/internal/lexer.{type Token}
 
 pub fn main() {
   gleeunit.main()
