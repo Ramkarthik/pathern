@@ -21,6 +21,10 @@ import pathern
 pub fn main() {
 
   // Path parameter match
+  // path: "/user/juliet"
+  // pattern: "/user/:name"
+  //
+  // returns: (path: "/user/juliet", pattern: "/user/:name", params: [#("name", "juliet")])
   pathern.match("/user/juliet", "/user/:name")
   |> should.equal(
     Ok(pathern.Pathern(
@@ -31,10 +35,16 @@ pub fn main() {
   )
 
   // Path parameter without match
+  //
+  // returns: Error(Nil)
   pathern.match("/user/juliet", "/create/:name")
   |> should.be_error()
 
   // Path parameter match against a list of patterns
+  // path: "/user/juliet/123"
+  // patterns: ["/", "/user", "/name", "/user/:name/:id"]
+  //
+  // returns: (path: "/user/juliet", pattern: "/user/:name", params: [#("name", "juliet"), #("id", "123")])
   pathern.match_patterns("/user/juliet", ["/", "/user", "/name", "/user/:name"])
   |> should.equal(
     Ok(pathern.Pathern(
@@ -45,6 +55,8 @@ pub fn main() {
   )
 
   // Path parameter without a match against a list of patterns
+  //
+  // returns: Error(Nil)
   pathern.match_patterns("/user/juliet", ["/", "/user", "/name", "/list/:name"])
   |> should.be_error()
 
