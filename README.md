@@ -35,6 +35,8 @@ pub fn main() {
   )
 
   // Path parameter without match
+  // path: "/user/juliet"
+  // pattern: "/create/:name"
   //
   // returns: Error(Nil)
   pathern.match("/user/juliet", "/create/:name")
@@ -45,16 +47,18 @@ pub fn main() {
   // patterns: ["/", "/user", "/name", "/user/:name/:id"]
   //
   // returns: (path: "/user/juliet", pattern: "/user/:name", params: [#("name", "juliet"), #("id", "123")])
-  pathern.match_patterns("/user/juliet", ["/", "/user", "/name", "/user/:name"])
+  pathern.match_patterns("/user/juliet/123", ["/", "/user", "/name", "/user/:name/:id"])
   |> should.equal(
     Ok(pathern.Pathern(
-      "/user/juliet",
-      "/user/:name",
-      dict.from_list([#("name", "juliet")]),
+      "/user/juliet/123",
+      "/user/:name/:id",
+      dict.from_list([#("name", "juliet"), #("id", "123")]),
     )),
   )
 
   // Path parameter without a match against a list of patterns
+  // path: "/user/juliet"
+  // patterns: ["/", "/user", "/name", "/list/:name"]
   //
   // returns: Error(Nil)
   pathern.match_patterns("/user/juliet", ["/", "/user", "/name", "/list/:name"])
