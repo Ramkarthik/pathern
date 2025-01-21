@@ -1,4 +1,6 @@
 # Pathern (path + pattern)
+[![Package Version](https://img.shields.io/hexpm/v/pathern)](https://hex.pm/packages/pathern)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/pathern/)
 
 A URL path pattern matching library for the Gleam programming language.
 
