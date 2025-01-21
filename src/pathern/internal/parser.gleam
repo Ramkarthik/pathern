@@ -16,6 +16,11 @@ fn parse_tokens(
   params: dict.Dict(String, String),
 ) -> Result(dict.Dict(String, String), Nil) {
   case tokens {
+    [token] if token.token_type == lexer.Slash ->
+      case path == "/" || path == "" {
+        True -> Ok(params)
+        False -> Error(Nil)
+      }
     [head, ..rest] ->
       case parse_token(head, path, params) {
         Ok(#(params, new_path)) -> {
@@ -23,11 +28,12 @@ fn parse_tokens(
         }
         Error(_) -> Error(Nil)
       }
-    [] ->
-      case string.is_empty(path) {
+    [] -> {
+      case string.is_empty(path) || path == "/" {
         True -> Ok(params)
         False -> Error(Nil)
       }
+    }
   }
 }
 

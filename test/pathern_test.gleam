@@ -12,6 +12,11 @@ pub fn empty_pattern_list_test() {
   |> should.be_error()
 }
 
+pub fn matching_root_without_slash_pattern_test() {
+  pathern.match("", "/")
+  |> should.equal(Ok(pathern.Pathern("", "/", dict.new())))
+}
+
 pub fn matching_root_pattern_test() {
   pathern.match("/", "/")
   |> should.equal(Ok(pathern.Pathern("/", "/", dict.new())))
@@ -54,16 +59,16 @@ pub fn matching_literal_param_pattern_test() {
 }
 
 pub fn non_matching_literal_param_pattern_test() {
-  pathern.match("/user/juliet", "/users/:name")
+  pathern.match("/user/juliet", "/users/:name/")
   |> should.be_error()
 }
 
 pub fn matching_literal_param_pattern_list_test() {
-  pathern.match_patterns("/user/juliet", ["/", "/user", "/name", "/user/:name"])
+  pathern.match_patterns("/user/juliet", ["/", "/user", "/name", "/user/:name/"])
   |> should.equal(
     Ok(pathern.Pathern(
       "/user/juliet",
-      "/user/:name",
+      "/user/:name/",
       dict.from_list([#("name", "juliet")]),
     )),
   )
@@ -75,10 +80,10 @@ pub fn non_matching_literal_param_pattern_list_test() {
 }
 
 pub fn matching_param_literal_param_pattern_test() {
-  pathern.match("/1234/user/juliet", "/:id/user/:name")
+  pathern.match("/1234/user/juliet/", "/:id/user/:name")
   |> should.equal(
     Ok(pathern.Pathern(
-      "/1234/user/juliet",
+      "/1234/user/juliet/",
       "/:id/user/:name",
       dict.from_list([#("id", "1234"), #("name", "juliet")]),
     )),
