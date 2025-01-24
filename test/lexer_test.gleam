@@ -115,3 +115,13 @@ pub fn a_slash_wildcard_slash_literal_test() {
   lexer.tokenize("/*/user", [], 0)
   |> should.equal(tokens)
 }
+
+pub fn a_slash_wildcard_literal_test() {
+  let tokens: List(Token) = [
+    { lexer.Token(lexer.Slash, 0, 1, "/") },
+    { lexer.Token(lexer.Wildcard, 1, 1, "*") },
+    { lexer.Token(lexer.Literal, 5, 4, "user") },
+  ]
+  lexer.tokenize("/*user", [], 0)
+  |> should.equal(tokens)
+}

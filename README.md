@@ -7,7 +7,7 @@ A URL path pattern matching library for the Gleam programming language.
 ## Installation
 
 ```
-gleam add pathern@0.1.0
+gleam add pathern@0.1.1
 
 ```
 
@@ -79,7 +79,7 @@ Further documentation can be found at <https://hexdocs.pm/pathern>.
 
 [ ] Optional parameter (`"/user/:name?/"`)
 
-[ ] Wildcard (`"/user/*"`)
+[x] Wildcard (`"/user/*"`)
 
 [ ] Regex (`"/user/:id{[0-9]+}/"`)
 

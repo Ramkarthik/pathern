@@ -102,3 +102,30 @@ pub fn matching_param_literal_param_pattern_list_test() {
     )),
   )
 }
+
+pub fn matching_wildcard_pattern_test() {
+  pathern.match("/create", "/*")
+  |> should.equal(Ok(pathern.Pathern("/create", "/*", dict.new())))
+}
+
+pub fn matching_wildcard_pattern_list_test() {
+  pathern.match_patterns("/create", [
+    "/", "/user", "/name", "/:id/user/:name", "/user/:name", "/*",
+  ])
+  |> should.equal(Ok(pathern.Pathern("/create", "/*", dict.new())))
+}
+
+pub fn matching_wildcard_literal_pattern_test() {
+  pathern.match("/create/user", "/*/user")
+  |> should.equal(Ok(pathern.Pathern("/create/user", "/*/user", dict.new())))
+
+  pathern.match("/create/user", "/*user")
+  |> should.equal(Ok(pathern.Pathern("/create/user", "/*user", dict.new())))
+}
+
+pub fn matching_wildcard_literal_pattern_list_test() {
+  pathern.match_patterns("/create/user", [
+    "/", "/user", "/name", "/:id/user/:name", "/creat*", "/create*",
+  ])
+  |> should.equal(Ok(pathern.Pathern("/create/user", "/creat*", dict.new())))
+}
