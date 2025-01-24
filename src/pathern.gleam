@@ -31,7 +31,10 @@ pub type Pathern {
 /// -> Error(Nil)
 /// ```
 /// 
-pub fn match(path: String, pattern: String) -> Result(Pathern, Nil) {
+pub fn match(
+  path path: String,
+  match_pattern pattern: String,
+) -> Result(Pathern, Nil) {
   let tokens = lexer.tokenize(pattern, [], 0)
   case parser.parse(path, tokens) {
     Ok(params) -> Ok(Pathern(path, pattern, params))
@@ -56,8 +59,8 @@ pub fn match(path: String, pattern: String) -> Result(Pathern, Nil) {
 /// ```
 /// 
 pub fn match_patterns(
-  path: String,
-  patterns: List(String),
+  path path: String,
+  match_patterns patterns: List(String),
 ) -> Result(Pathern, Nil) {
   case patterns {
     [head, ..rest] ->

@@ -1,5 +1,5 @@
 name = "pathern"
-version = "0.1.1"
+version = "0.2.0"
 
 description = "A URL path pattern matching library for the Gleam programming language"
 licences = ["Apache-2.0"]

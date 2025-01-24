@@ -7,7 +7,7 @@ A URL path pattern matching library for the Gleam programming language.
 ## Installation
 
 ```
-gleam add pathern@0.1.1
+gleam add pathern@0.2.0
 
 ```
 
