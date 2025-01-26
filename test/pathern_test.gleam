@@ -2,6 +2,7 @@ import gleam/dict
 import gleeunit
 import gleeunit/should
 import pathern
+import pathern/internal/parser
 
 pub fn main() {
   gleeunit.main()
@@ -128,4 +129,46 @@ pub fn matching_wildcard_literal_pattern_list_test() {
     "/", "/user", "/name", "/:id/user/:name", "/creat*", "/create*",
   ])
   |> should.equal(Ok(pathern.Pathern("/create/user", "/creat*", dict.new())))
+}
+
+pub fn pattern_error_optional_param_pattern_test() {
+  let res = pathern.match("/12345/", "/:id?user")
+  case res {
+    Ok(_) -> False
+    Error(error) ->
+      case error {
+        parser.PatternError(_) -> True
+        _ -> False
+      }
+  }
+}
+
+pub fn matching_optional_param_pattern_test() {
+  pathern.match_patterns("/12345/", [
+    "/", "/user", "/name", "/:id?", "/creat*", "/create*",
+  ])
+  |> should.equal(
+    Ok(pathern.Pathern("/12345/", "/:id?", dict.from_list([#("id", "12345")]))),
+  )
+}
+
+pub fn matching_optional_param_literal_pattern_test() {
+  pathern.match_patterns("/12345/user", [
+    "/", "/user", "/name", "/:id?/user", "/creat*", "/create*",
+  ])
+  |> should.equal(
+    Ok(pathern.Pathern(
+      "/12345/user",
+      "/:id?/user",
+      dict.from_list([#("id", "12345")]),
+    )),
+  )
+}
+
+pub fn matching_optional_param_without_one_test() {
+  pathern.match("/user", "/:id?/user")
+  |> should.equal(Ok(pathern.Pathern("/user", "/:id?/user", dict.new())))
+
+  pathern.match("/user/", "/user/:id?")
+  |> should.equal(Ok(pathern.Pathern("/user/", "/user/:id?", dict.new())))
 }

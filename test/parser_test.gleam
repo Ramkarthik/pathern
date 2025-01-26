@@ -1,10 +1,13 @@
 import gleam/dict
+import gleam/result
 import gleeunit
 import gleeunit/should
 import pathern/internal/lexer.{
-  type Token, Literal, Param, Slash, Token, Wildcard,
+  type Token, Literal, OptionalParam, Param, Slash, Token, Wildcard,
 }
-import pathern/internal/parser
+import pathern/internal/parser.{
+  MatchError, PatternError, PatternNotSupportedError,
+}
 
 pub fn main() {
   gleeunit.main()
@@ -27,7 +30,7 @@ pub fn a_non_matching_slash_literal_slash_parser_test() {
     { Token(Slash, 5, 1, "/") },
   ]
   parser.parse("/uses/", tokens)
-  |> should.be_error()
+  |> should.equal(Error(MatchError))
 }
 
 pub fn a_non_matching_lenth_slash_literal_slash_parser_test() {
@@ -37,7 +40,7 @@ pub fn a_non_matching_lenth_slash_literal_slash_parser_test() {
     { Token(Slash, 5, 1, "/") },
   ]
   parser.parse("/users/", tokens)
-  |> should.be_error()
+  |> should.equal(Error(MatchError))
 }
 
 pub fn a_matching_slash_literal_slash_param_parser_test() {
@@ -70,7 +73,7 @@ pub fn a_non_matching_slash_param_slash_literal_parser_test() {
     { Token(Literal, 10, 4, "users") },
   ]
   parser.parse("/jane/users", tokens)
-  |> should.be_error()
+  |> should.equal(Error(MatchError))
 }
 
 pub fn a_matching_slash_wildcard_test() {
@@ -134,4 +137,92 @@ pub fn a_matching_slash_param_slash_wildcard_test() {
   ]
   parser.parse("/james/12345", tokens)
   |> should.equal(Ok(dict.from_list([#("name", "james")])))
+}
+
+pub fn a_matching_slash_optional_param_test() {
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+  ]
+  parser.parse("/12345", tokens)
+  |> should.equal(Ok(dict.from_list([#("name", "12345")])))
+
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+  ]
+  parser.parse("/", tokens)
+  |> should.equal(Ok(dict.new()))
+}
+
+pub fn a_matching_slash_optional_param_slash_test() {
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+    { Token(Slash, 7, 1, "/") },
+  ]
+  parser.parse("/12345/", tokens)
+  |> should.equal(Ok(dict.from_list([#("name", "12345")])))
+}
+
+pub fn an_error_slash_optional_param_literal_test() {
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+    { Token(Literal, 7, 4, "user") },
+  ]
+  parser.parse("/12345/user", tokens)
+  |> should.equal(
+    Error(PatternError(
+      "Expected a `/` after the optional parameter but received `user`",
+    )),
+  )
+}
+
+pub fn an_error_slash_optional_param_slash_param_test() {
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+    { Token(Slash, 7, 1, "/") },
+    { Token(Param, 8, 4, "user") },
+  ]
+  parser.parse("/12345/user", tokens)
+  |> should.equal(
+    Error(PatternNotSupportedError(
+      "Expected a `literal` after the optional parameter and a `/`",
+    )),
+  )
+}
+
+pub fn a_matching_slash_optional_param_slash_literal_test() {
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+    { Token(Slash, 7, 1, "/") },
+    { Token(Literal, 8, 6, "create") },
+  ]
+  parser.parse("/12345/create", tokens)
+  |> should.equal(Ok(dict.from_list([#("name", "12345")])))
+}
+
+pub fn a_non_matching_slash_optional_param_slash_literal_test() {
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+    { Token(Slash, 7, 1, "/") },
+    { Token(Literal, 8, 5, "creat") },
+  ]
+  parser.parse("/12345/create", tokens)
+  |> should.equal(Error(MatchError))
+}
+
+pub fn a_matching_optional_param_without_value_test() {
+  let tokens: List(Token) = [
+    { Token(Slash, 0, 1, "/") },
+    { Token(OptionalParam, 1, 4, "name") },
+    { Token(Slash, 7, 1, "/") },
+    { Token(Literal, 8, 6, "create") },
+  ]
+  parser.parse("/create", tokens)
+  |> should.equal(Ok(dict.new()))
 }

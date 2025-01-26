@@ -6,7 +6,7 @@
 /// If there is no match, it returns an Error(Nil)
 import gleam/dict.{type Dict}
 import pathern/internal/lexer
-import pathern/internal/parser
+import pathern/internal/parser.{type ParseError}
 
 /// A Pathern type is the result if there is a match
 /// 
@@ -34,11 +34,11 @@ pub type Pathern {
 pub fn match(
   path path: String,
   match_pattern pattern: String,
-) -> Result(Pathern, Nil) {
+) -> Result(Pathern, ParseError) {
   let tokens = lexer.tokenize(pattern, [], 0)
   case parser.parse(path, tokens) {
     Ok(params) -> Ok(Pathern(path, pattern, params))
-    Error(_) -> Error(Nil)
+    Error(error) -> Error(error)
   }
 }
 

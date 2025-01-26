@@ -8,7 +8,6 @@ A URL path pattern matching library for the Gleam programming language.
 
 ```
 gleam add pathern@0.2.0
-
 ```
 
 
@@ -38,7 +37,7 @@ pub fn main() {
   // path: "/user/juliet"
   // pattern: "/create/:name"
   //
-  // returns: Error(Nil)
+  // returns: Error(MatchError)
   pathern.match("/user/juliet", "/create/:name")
   |> should.be_error()
 
